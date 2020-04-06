@@ -1,0 +1,2 @@
+rootProject.name='Bounce_Along'
+include ':app'
