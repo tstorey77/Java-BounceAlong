@@ -3,6 +3,7 @@ package com.example.bounce_along;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 
 public class Dino {
     public boolean isJumping = false;
@@ -22,6 +23,10 @@ public class Dino {
 
         y = screenY - 225;
         x = 64;
+    }
+
+    Rect getCollisionShape(){
+        return new Rect(x, y, x + width - 100, y + height);
     }
 
     Bitmap getDino(){
