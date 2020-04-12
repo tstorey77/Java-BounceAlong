@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseUser mFirebaseUser;
     private String mUsername;
     private String mPhotoUrl;
+    private DatabaseReference mDatabase;
+    private String username;
     public static final String ANONYMOUS = "anonymous";
 
     @Override
@@ -46,7 +49,15 @@ public class MainActivity extends AppCompatActivity {
                 mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
             }
         }
+        // database stuff
+        FirebaseUser curr_user = FirebaseAuth.getInstance().getCurrentUser();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        username = curr_user.getDisplayName();
+        String score_id = mDatabase.push().getKey();
+        User test = new User(username, 0); // add a zero score at the start in case the user is new
+        mDatabase.child(username).child(score_id).setValue(test);
 
+        // initialize buttons
         btnStart = findViewById(R.id.btnStart);
         btnHighscores = findViewById(R.id.btnHighscores);
         btnSettings = findViewById(R.id.btnSettings);

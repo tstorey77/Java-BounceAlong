@@ -1,15 +1,31 @@
 package com.example.bounce_along;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
+import android.text.InputType;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Random;
 
@@ -20,14 +36,18 @@ public class GameView extends SurfaceView implements Runnable {
     private int screenX, screenY;
     private Paint paint;
     private Dino dino;
+    private String m_text;
     private Hunter hunter;
     private Hunter[] mediumModeHunter;
     private Hunter[] hardModeHunter;
     private MediaPlayer player;
     private Random random;
     private boolean isGameOver = false;
+    private String username;
     int score = 10;
     private int high = -10;
+    private int this_score;
+    private DatabaseReference mDatabase;
 
     public GameView(Context context, int screenX, int screenY){
         super(context);
@@ -36,6 +56,10 @@ public class GameView extends SurfaceView implements Runnable {
 
         mediumModeHunter = new Hunter[2];
         hardModeHunter = new Hunter[4];
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        FirebaseUser curr_user = FirebaseAuth.getInstance().getCurrentUser();
+        username = curr_user.getDisplayName();
 
 
         // get medium mode ready
@@ -128,8 +152,31 @@ public class GameView extends SurfaceView implements Runnable {
                 isPlaying = false;
                 // game over show the highscore
                 // save highscore
-                // test
-                /// tester
+                // get the current logged in user
+
+                // check if new score is higher than their score
+                FirebaseDatabase data = FirebaseDatabase.getInstance();
+                DatabaseReference mReferenceUsers = data.getReference().child(username);
+                mReferenceUsers.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        User this_user = dataSnapshot.getValue(User.class);
+                        this_score = this_user.score;
+                        // if high is greater than this score add to db
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                if(high > this_score){
+                    User user = new User(username, high);
+                    String score_id = mDatabase.push().getKey();
+                    mDatabase.child(username).child(score_id).setValue(user);
+                } // else don't add
+
             }
 
             canvas.drawBitmap(hunter.getHunter(), hunter.x, hunter.y, paint);
