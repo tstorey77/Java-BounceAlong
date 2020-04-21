@@ -3,6 +3,8 @@ package com.example.bounce_along;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -48,11 +50,21 @@ public class GameView extends SurfaceView implements Runnable {
     private int high = -10;
     private int this_score;
     private DatabaseReference mDatabase;
+    private SharedPreferences sharedPreferences;
+    private String mode;
+    int max = 400;
+    int min = 375;
+    int randomNumber;
+
 
     public GameView(Context context, int screenX, int screenY){
         super(context);
         this.screenX = screenX;
         this.screenY = screenY;
+
+        sharedPreferences = this.getContext().getSharedPreferences("Settings", this.getContext().MODE_PRIVATE);
+        mode = sharedPreferences.getString("Mode", "Easy");
+
 
         mediumModeHunter = new Hunter[2];
         hardModeHunter = new Hunter[4];
@@ -74,7 +86,7 @@ public class GameView extends SurfaceView implements Runnable {
             hardModeHunter[i] = hunter;
         }
 
-        random = new Random();
+
         paint = new Paint();
         paint.setTextSize(128);
         paint.setColor(Color.BLACK);
@@ -98,12 +110,29 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     private void update(){
-        background1.x -= 5;
-        background2.x -= 5;
+        random = new Random();
+
+        if (mode == "Easy"){
+            background1.x -= 5;
+            background2.x -= 5;
+            hunter.y = screenY - 375;
+        } else if (mode == "Medium"){
+            randomNumber = random.nextInt(max - min) + min;
+            background1.x -= 10;
+            background2.x -= 10;
+            hunter.speed = 30;
+            hunter.y = screenY - randomNumber;
+        } else {
+            randomNumber = random.nextInt(725 - 375) + 375;
+            background1.x -= 20;
+            background2.x -= 20;
+            hunter.speed = 50;
+            hunter.y = screenY - randomNumber;
+        }
 
         // hunter stuff
         hunter.x -= hunter.speed;
-        hunter.y = screenY - 375;
+
         // off screen
         if(hunter.x + hunter.width < 0){
             // add to highscores
@@ -153,6 +182,8 @@ public class GameView extends SurfaceView implements Runnable {
                 // game over show the highscore
                 // save highscore
                 // get the current logged in user
+                paint.setTextSize(96);
+                canvas.drawText("You lost! Score: " + high,screenX / 8, screenY / 3, paint );
 
                 // check if new score is higher than their score
                 FirebaseDatabase data = FirebaseDatabase.getInstance();
@@ -180,7 +211,10 @@ public class GameView extends SurfaceView implements Runnable {
             }
 
             canvas.drawBitmap(hunter.getHunter(), hunter.x, hunter.y, paint);
-            canvas.drawText("Score: " + high, screenX / 3 -50, screenY / 6, paint);
+            if(isPlaying){
+                canvas.drawText("Score: " + high, screenX / 3 -50, screenY / 6, paint);
+            }
+
             getHolder().unlockCanvasAndPost(canvas);
         }
     }

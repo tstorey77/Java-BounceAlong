@@ -92,11 +92,11 @@ public class Highscores extends AppCompatActivity {
                    score4.setVisibility(View.GONE);
                    score5.setVisibility(View.GONE);
                 } else {
-                    score1.setText("Score: " + highscores[0] + " By: " + score_user[0]);
-                    score2.setText("Score: " + highscores[1] + " By: " + score_user[1]);
-                    score3.setText("Score: " + highscores[2] + " By: " + score_user[2]);
-                    score4.setText("Score: " + highscores[3] + " By: " + score_user[3]);
-                    score5.setText("Score: " + highscores[4] + " By: " + score_user[4]);
+                    score1.setText("#1... " + highscores[0] + " By: " + score_user[0]);
+                    score2.setText("#2... " + highscores[1] + " By: " + score_user[1]);
+                    score3.setText("#3... " + highscores[2] + " By: " + score_user[2]);
+                    score4.setText("#4... " + highscores[3] + " By: " + score_user[3]);
+                    score5.setText("#5... " + highscores[4] + " By: " + score_user[4]);
                 }
 
             }

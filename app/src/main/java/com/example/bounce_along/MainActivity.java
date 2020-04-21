@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
         mUsername = ANONYMOUS;
         // Initialize Firebase Auth
+
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         if (mFirebaseUser == null) {
@@ -107,5 +108,11 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
     }
 }
