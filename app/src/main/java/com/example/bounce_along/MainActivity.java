@@ -34,9 +34,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mUsername = ANONYMOUS;
-        // Initialize Firebase Auth
+        // no tool bar
+        getSupportActionBar().hide();
 
+        mUsername = ANONYMOUS;
+
+        // Initialize Firebase Auth
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         if (mFirebaseUser == null) {
@@ -68,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         btnHighscores.setOnClickListener(eventHandler);
         btnSettings.setOnClickListener(eventHandler);
 
-
+        // create media play is none
         if(player == null){
             player = MediaPlayer.create(this, R.raw.song);
         }
@@ -82,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("Settings", MODE_PRIVATE);
         music = sharedPreferences.getBoolean("Music", true);
 
+        // starts music
         if(music){
             player.start();
         } else {
@@ -89,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // event handler for button clicks
     class EventHandler implements View.OnClickListener{
 
         @Override

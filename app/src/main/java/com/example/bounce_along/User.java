@@ -1,5 +1,6 @@
 package com.example.bounce_along;
 
+// This is used for writing to the db
 public class User {
     public String userId;
     public int score;

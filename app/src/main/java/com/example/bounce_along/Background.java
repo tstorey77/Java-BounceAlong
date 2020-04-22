@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+// Sets up the bitmap for the background
 public class Background
 {
     int x = 0;

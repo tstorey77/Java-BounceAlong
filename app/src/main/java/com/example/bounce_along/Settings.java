@@ -21,18 +21,22 @@ public class Settings extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        getSupportActionBar().hide();
 
+        // get controls
         rbEasy = findViewById(R.id.rbEasy);
         rbMedium = findViewById(R.id.rbMedium);
         rbHard = findViewById(R.id.rbHard);
         cbMusic = findViewById(R.id.cbMusic);
 
+        // get current settings
         sharedPreferences = getSharedPreferences("Settings", MODE_PRIVATE);
         music = sharedPreferences.getBoolean("Music", false);
         mode = sharedPreferences.getString("Mode", "Easy");
 
         EventHandler eventHandler = new EventHandler();
 
+        // setting event listeners
         rbEasy.setOnClickListener(eventHandler);
         rbMedium.setOnClickListener(eventHandler);
         rbHard.setOnClickListener(eventHandler);
@@ -62,6 +66,14 @@ public class Settings extends AppCompatActivity {
            editor.putBoolean("Music", true);
         } else {
             editor.putBoolean("Music", false);
+        }
+
+        if(rbEasy.isChecked()){
+            editor.putString("Mode", "Easy");
+        } else if (rbMedium.isChecked()){
+            editor.putString("Mode", "Medium");
+        } else {
+            editor.putString("Mode", "Hard");
         }
     }
 

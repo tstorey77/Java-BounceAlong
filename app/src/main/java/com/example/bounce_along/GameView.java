@@ -62,17 +62,18 @@ public class GameView extends SurfaceView implements Runnable {
         this.screenX = screenX;
         this.screenY = screenY;
 
+        // get settings
         sharedPreferences = this.getContext().getSharedPreferences("Settings", this.getContext().MODE_PRIVATE);
         mode = sharedPreferences.getString("Mode", "Easy");
 
-
+        // for future implementations
         mediumModeHunter = new Hunter[2];
         hardModeHunter = new Hunter[4];
 
+        // database stuff - get reference and get user
         mDatabase = FirebaseDatabase.getInstance().getReference();
         FirebaseUser curr_user = FirebaseAuth.getInstance().getCurrentUser();
         username = curr_user.getDisplayName();
-
 
         // get medium mode ready
         for(int i = 0 ; i < 2 ; i++){
@@ -86,21 +87,22 @@ public class GameView extends SurfaceView implements Runnable {
             hardModeHunter[i] = hunter;
         }
 
-
+        // create paint object and set values
         paint = new Paint();
         paint.setTextSize(128);
         paint.setColor(Color.BLACK);
 
+        // create background and players
         background1 = new Background(screenX, screenY, getResources());
         background2 = new Background(screenX, screenY, getResources());
         dino = new Dino(screenY, getResources());
-
         hunter = new Hunter(screenY, getResources());
-
         background2.x = screenX;
+
     }
     @Override
     public void run() {
+        // game loop. Runs while isPlaying is true
         while(isPlaying){
             update();
             draw();
@@ -111,7 +113,7 @@ public class GameView extends SurfaceView implements Runnable {
 
     private void update(){
         random = new Random();
-
+        // check settings and update game accordingly
         if (mode == "Easy"){
             background1.x -= 5;
             background2.x -= 5;
@@ -130,7 +132,7 @@ public class GameView extends SurfaceView implements Runnable {
             hunter.y = screenY - randomNumber;
         }
 
-        // hunter stuff
+        // hunter speed
         hunter.x -= hunter.speed;
 
         // off screen
@@ -141,6 +143,7 @@ public class GameView extends SurfaceView implements Runnable {
             high += score;
         }
 
+        // checks if dino gets hit by hunter
         if(Rect.intersects(hunter.getCollisionShape(), dino.getCollisionShape())){
             isGameOver = true;
             return;
@@ -154,12 +157,14 @@ public class GameView extends SurfaceView implements Runnable {
             background2.x = screenX;
         }
 
+        // lets the dino jump - hard coded values because no animation
         if(dino.isJumping){
             dino.y -= 300;
         } else {
             dino.y += 300;
         }
 
+        // sets dino location
         if(dino.y < screenY / 2){
             dino.y = screenY / 2;
         }
@@ -169,7 +174,7 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     private void draw(){
-
+        // draws the background and dino + hunters
         if(getHolder().getSurface().isValid()){
             Canvas canvas = getHolder().lockCanvas();
             canvas.drawBitmap(background1.background, background1.x, background1.y, paint);
@@ -177,6 +182,7 @@ public class GameView extends SurfaceView implements Runnable {
 
             canvas.drawBitmap(dino.getDino(), dino.x, dino.y, paint);
 
+            // game is over
             if(isGameOver){
                 isPlaying = false;
                 // game over show the highscore
@@ -201,7 +207,7 @@ public class GameView extends SurfaceView implements Runnable {
 
                     }
                 });
-
+                // checks if it should add to db or not
                 if(high > this_score){
                     User user = new User(username, high);
                     String score_id = mDatabase.push().getKey();
@@ -210,7 +216,10 @@ public class GameView extends SurfaceView implements Runnable {
 
             }
 
+            // draw hunter
             canvas.drawBitmap(hunter.getHunter(), hunter.x, hunter.y, paint);
+
+            // draw score message on canvas
             if(isPlaying){
                 canvas.drawText("Score: " + high, screenX / 3 -50, screenY / 6, paint);
             }
@@ -218,7 +227,7 @@ public class GameView extends SurfaceView implements Runnable {
             getHolder().unlockCanvasAndPost(canvas);
         }
     }
-// use firebase for the db - internet and db credit
+
     private void sleep(){
         try {
             Thread.sleep(17);
@@ -227,12 +236,14 @@ public class GameView extends SurfaceView implements Runnable {
         }
     }
 
+    // starts the game on resume
     public void resume(){
         isPlaying = true;
         thread = new Thread(this);
         thread.start();
     }
 
+    // handles the end game
     public void pause(){
         try {
             isPlaying = false;
@@ -242,6 +253,7 @@ public class GameView extends SurfaceView implements Runnable {
         }
     }
 
+    // This helps the dino jump on touch
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int x = (int)event.getX();

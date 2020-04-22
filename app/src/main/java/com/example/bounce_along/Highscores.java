@@ -45,6 +45,8 @@ public class Highscores extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_highscores);
+        getSupportActionBar().hide();
+
         // initializing variables
         score1 = findViewById(R.id.tvScore1);
         score2 = findViewById(R.id.tvScore2);
@@ -106,14 +108,5 @@ public class Highscores extends AppCompatActivity {
 
             }
         });
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // set values of textviews
-       /*
-   */
     }
 }

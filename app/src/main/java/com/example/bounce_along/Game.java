@@ -9,6 +9,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+// Runs the gameView and sets values
 public class Game extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private String mode;
@@ -21,18 +22,14 @@ public class Game extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // full screen
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
 
+        // create and set gameview
         gameView = new GameView(this, point.x, point.y);
-
         setContentView(gameView);
-
-        sharedPreferences = getSharedPreferences("Settings", MODE_PRIVATE);
-        mode = sharedPreferences.getString("Mode", "Easy");
-        music = sharedPreferences.getBoolean("Music", false);
-
 
     }
 
